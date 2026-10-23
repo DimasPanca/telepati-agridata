@@ -32,8 +32,9 @@ bergantung_pada: [01_PRD.md, 02_SYSTEM_DESIGN.md]
 | **`A_yolo11s_s42`** | YOLO11s (`.yaml`) | Baseline | Seberapa bagus pilihan paling aman? | Rahman | Rahman |
 | **`B_yolo26s_s42`** | YOLO26s (`.yaml`) | Arsitektur | Apakah fitur lesi kecil YOLO26 membantu dari nol? | Maman | Maman |
 | **`C_yolo11s_bal_s42`** | YOLO11s (`.yaml`) | Repeat factor sampling, `t = 0.10` (kelas langka diulang sekitar 2×) | Apakah F1 makro naik lewat kelas langka? | Dimas | Dimas |
+| **`A800_yolo11s_s42`** | YOLO11s, mulai dari `best.pt` Run A | Resolusi 800, 40 epoch, SGD `lr0=0.002` | Apakah resolusi lebih tinggi memperbaiki lesi kecil (Brown spot, Leaf scald, Blast)? | Dimas | Dimas (shortcut folder Run A) |
 
-`RUN_ID` di atas adalah kunci tabel `RUNS` di bagian 7 notebook. Run C dipindah ke akun Dimas supaya Rahman tidak perlu menunggu Run A selesai.
+`RUN_ID` di atas adalah kunci tabel `RUNS` di bagian 7 notebook. Run C dipindah ke akun Dimas supaya Rahman tidak perlu menunggu Run A selesai. Setelah hasil Run A keluar, akun Dimas dipakai untuk `A800_yolo11s_s42` (D-16); Run C dijalankan hanya jika ada GPU yang menganggur.
 
 Kalau waktu tersisa setelah seleksi: **A+** = melanjutkan training run pemenang beberapa puluh epoch, dicek ulang di valid.
 

@@ -203,6 +203,8 @@ Alasan valid/test tidak dibersihkan: skor harus dihitung terhadap label yang sam
 | Output | `project=RUNS_DIR`, `name=RUN_ID`, `exist_ok=True` | Langsung ke Drive |
 | Resume | Ada `last.pt` → `train(resume=True)`; kalau training sudah selesai, dilewati | |
 
+Run lanjutan `A800_yolo11s_s42` memakai `best.pt` Run A sebagai bobot awal dengan `pretrained=True` (di Ultralytics, `pretrained=False` membuang bobot dari file `.pt` yang dimuat), `imgsz=800`, 40 epoch, optimizer SGD `lr0=0.002`, `lrf=0.1`, `warmup_epochs=1`. Evaluasi membaca resolusi dari metadata checkpoint, sehingga checkpoint 640 dan 800 masing-masing dinilai pada resolusinya sendiri.
+
 Catatan AMP: Ultralytics mengunduh model kecil hanya untuk *memeriksa* dukungan mixed precision. Bobot itu tidak dipakai untuk inisialisasi. Penjelasan ini ada di Markdown bagian 1 notebook.
 
 ---

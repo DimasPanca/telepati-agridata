@@ -165,6 +165,7 @@ Sumber: halaman regulasi resmi TELEPATI 8.0 dan jawaban tertulis panitia (diteri
 | D-12 | Model cadangan: run pertama yang lolos latihan audit langsung disubmit; model lebih baik (berdasarkan **valid**) di-resubmit sebelum batas. | R-21, jaminan selalu ada yang terkirim. |
 | D-13 | Versi library dipin: **ultralytics 8.4.184** (mendukung YOLO11 dan YOLO26). PyTorch memakai versi bawaan Colab dan dicatat di setiap run. | Lingkungan training = lingkungan audit. |
 | D-14 | Pembersihan hanya untuk **train**: box dipotong ke batas gambar, sisi < 2 px dibuang, box identik dalam satu gambar disisakan satu. Label valid dan test hanya dipetakan ke 11 kelas dan dipotong ke batas gambar. | Skor valid/test harus dihitung terhadap label yang sama dengan juri. |
+| D-16 | Run lanjutan `A800_yolo11s_s42`: fine-tuning dari `best.pt` Run A di resolusi 800, menggantikan Run C di akun Dimas. Ditambahkan setelah Run A menunjukkan kelas langka sudah kuat (Narrow brown ±0,98) dan kelemahan ada di lesi kecil (Brown spot ±0,40, Leaf scald ±0,54, Blast ±0,56). | Bobot awal hasil training tim sendiri dari nol, bukan pretrained eksternal (R-10 tetap terpenuhi). |
 | D-15 | Seluruh kode ada di notebook; konfigurasi run berupa tabel `RUNS` di bagian 7 notebook (tidak ada folder `configs/`). Trainer hanya mengubah `RUN_ID` di sel konfigurasi. | R-07, dan notebook bisa langsung dijalankan dari Colab tanpa clone repo privat. |
 
 ---
