@@ -25,7 +25,7 @@ implementasi: notebooks/agridata_pipeline.ipynb
 [Google Colab T4] ── notebooks/agridata_pipeline.ipynb
    S-00 Konfigurasi (MODE, RUN_ID, path, seed)
    S-01 Lingkungan: pasang ultralytics 8.4.184, mount Drive, kunci seed
-   S-02 Dataset mentah: verifikasi SHA-256, ekstrak, validasi jumlah
+   S-02 Dataset mentah: ekstrak (zip resmi atau zip tim), cek kelengkapan, validasi jumlah
    S-03 Pemetaan 21 → 11 kelas
    S-04 Pembersihan anotasi (train saja)
    S-05 Konversi COCO → YOLO (+ repeat factor sampling untuk Run C)
@@ -58,7 +58,7 @@ Prinsip desain:
 |---|---|
 | Runtime | GPU T4. Sel S-01 memasang `ultralytics==8.4.184` (D-13). PyTorch memakai versi bawaan Colab dan versinya dicetak. |
 | Akun | Setiap anggota memakai akun Google sendiri. Kuota GPU dihitung per akun, jadi tiga run bisa berjalan paralel. |
-| Data | Zip dataset di Drive → diverifikasi SHA-256 → diekstrak ke `/content/work/raw`. **Tidak** melatih langsung dari Drive. |
+| Data | Zip dataset di Drive → diekstrak ke `/content/work/raw` (metadata macOS dilewati, folder split dicari otomatis). **Tidak** melatih langsung dari Drive. |
 | Penyimpanan kerja | Run ditulis langsung ke `RUNS_DIR/RUN_ID` di Drive, supaya checkpoint selamat kalau sesi putus. |
 | Batas sesi | Sesi gratis maksimal sekitar 12 jam dan bisa putus saat idle. Jalankan ulang notebook dengan `RUN_ID` yang sama → otomatis resume dari `last.pt`. |
 | Fitur AI Colab | Tidak dipakai untuk mengolah dataset (R-11). |
@@ -122,7 +122,7 @@ Konfigurasi run tidak disimpan sebagai file terpisah; semuanya ada di tabel `RUN
 |---|---|---|---|---|
 | 0 | S-00 | `MODE`, `RUN_ID`, path, `WEIGHTS_URL`, `WEIGHTS_SHA256`, `E2_CONF`, `SEED`, `IMGSZ`, `RUN_FINAL_TEST` | ✓ | ✓ |
 | 1 | S-01 | Pasang ultralytics, mount Drive, `set_seed`, cetak versi | ✓ | ✓ |
-| 2 | S-02 | `sha256sum`, `extract_dataset`, `load_coco`, validasi `EXPECTED_COUNTS` | ✓ | ✓ |
+| 2 | S-02 | `sha256sum`, `find_dataset_root`, `is_complete`, `prepare_dataset`, `load_coco`, validasi `EXPECTED_COUNTS` | ✓ | ✓ |
 | 3 | S-03 | `CLASS_NAMES`, `RAW_TO_CANONICAL`, `SUPERCATEGORIES`, `to_frames`, tabel jumlah box | ✓ | ✓ |
 | 4 | S-04 | `clip_boxes`, `clean_train_boxes` | ✓ | definisi saja |
 | 5 | S-05 | `export_split`, `repeat_factors` | ✓ | definisi saja |
@@ -141,7 +141,9 @@ Setiap bagian diawali sel Markdown yang menjelaskan tujuan, keluaran, dan aturan
 
 ### S-02 Dataset mentah
 - Masukan: `telepati-agridata-raw.zip` berisi `train/`, `valid/`, `test/`, masing-masing gambar `.jpg` dan `_annotations.coco.json`.
-- SHA-256 diverifikasi sebelum ekstraksi. Jumlah gambar dan anotasi divalidasi terhadap `03_DATA_CARD.md` §2.
+- Menerima zip resmi panitia (split dibungkus satu folder, ada `__MACOSX`, `._*`, `.DS_Store`) maupun zip tim (split langsung di akar). File metadata macOS dilewati saat ekstraksi; folder berisi `train/_annotations.coco.json` dicari otomatis dan menjadi `RAW_DIR`.
+- Ekstraksi dianggap selesai hanya jika semua gambar yang tercantum di file COCO ada. Ekstraksi yang terputus diulang dari awal.
+- SHA-256 dibandingkan dengan zip referensi tim hanya sebagai informasi, karena juri memakai zip resmi yang checksum-nya berbeda. Validitas isi dipastikan lewat jumlah gambar dan anotasi terhadap `03_DATA_CARD.md` §2.
 
 ### S-03 Pemetaan kelas
 - `RAW_TO_CANONICAL` berbasis **nama** kategori raw. Kategori yang tidak dikenal menghentikan notebook dengan error.
