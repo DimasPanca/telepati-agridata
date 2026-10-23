@@ -1,0 +1,30 @@
+# Dataset dan arsip (dataset resmi tidak diunggah ke repo)
+*.zip
+*.sha256
+Telepati 8.0 Datasets/
+datasets/
+data/
+
+# Sampah sistem operasi
+__MACOSX/
+.DS_Store
+Thumbs.db
+
+# Hasil training dan weights (weights dirilis lewat GitHub Releases)
+runs/
+*.pt
+*.onnx
+*.h5
+*.pkl
+*.cache
+
+# Python dan Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# Kredensial
+kaggle.json
