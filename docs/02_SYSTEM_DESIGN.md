@@ -154,7 +154,7 @@ Setiap bagian diawali sel Markdown yang menjelaskan tujuan, keluaran, dan aturan
 |---|---|---|
 | Koordinat di luar batas gambar → dipotong | ✓ | ✓ |
 | Sisi box < 2 px → dibuang | ✓ (22 box) | — |
-| Box identik dalam satu gambar → disisakan satu | ✓ (8 box) | — |
+| Box identik dalam satu gambar → disisakan satu | ✓ (7 box) | — |
 | Box seluas gambar penuh | dipertahankan | dipertahankan |
 | Gambar tanpa anotasi | dipertahankan sebagai latar | dipertahankan |
 
@@ -213,7 +213,7 @@ Catatan AMP: Ultralytics mengunduh model kecil hanya untuk *memeriksa* dukungan 
 | **E2** | F1 makro 11 kelas pada confidence tetap `E2_CONF`. Prediksi per kelas diurutkan dari confidence tertinggi lalu dicocokkan greedy ke label dengan IoU ≥ 0,5. | Cadangan bila juri memakai confidence tetap. |
 | mAP@50 | Dari `model.val()` | Pembanding |
 
-Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `iou=0.7` (NMS), `max_det=300`, `half=False`.
+Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `iou=0.7` (NMS), `max_det=300`, `quantize=32` (FP32).
 
 Pencocokan E2 dihitung sekali pada confidence 0,001. Karena prediksi diproses dari confidence tertinggi, memotong daftar pada threshold mana pun menghasilkan pencocokan yang sama, sehingga semua threshold bisa dievaluasi dari satu kali inference.
 
