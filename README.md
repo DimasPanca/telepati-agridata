@@ -9,8 +9,9 @@ Model YOLO11s dilatih dari nol menggunakan dataset resmi Agritech Data.
 | Anggota | Dimas (Ketua), Rahman, Maman |
 | Dosen Pembimbing | Arief Rahman, S.Kom., M.Kom |
 | Notebook | [notebooks/agridata_pipeline.ipynb](notebooks/agridata_pipeline.ipynb) ([Colab](https://colab.research.google.com/github/DimasPanca/telepati-agridata/blob/main/notebooks/agridata_pipeline.ipynb)) |
+| Versi | v1.2: weights v1.0 dengan NMS IoU 0.45 per kelas |
 | Weights | [telepati_agridata_v1.0.pt](https://github.com/DimasPanca/telepati-agridata/releases/download/v1.0/telepati_agridata_v1.0.pt) |
-| F1 makro test | 0.6951 |
+| F1 makro test | 0.7023 |
 
 ## Cara Menjalankan
 
@@ -22,7 +23,7 @@ Model YOLO11s dilatih dari nol menggunakan dataset resmi Agritech Data.
    MODE = "inference_only"
    DATA_ZIP = "<path zip dataset resmi atau folder hasil ekstrak>"
    ```
-   `WEIGHTS_URL`, `WEIGHTS_SHA256`, dan `E2_CONF` sudah terisi.
+   `WEIGHTS_URL`, `WEIGHTS_SHA256`, `E2_CONF`, `NMS_IOU`, dan `AGNOSTIC_NMS` sudah terisi.
 3. Runtime > Run all.
 
 Keluaran (bagian 11): F1 makro (E1, E2), mAP@50, F1 per kelas, dan waktu. Inference sekitar 10 ms per gambar di T4.
@@ -45,7 +46,7 @@ Run yang terputus dilanjutkan dari `last.pt` jika dijalankan ulang dengan `RUN_I
 | 4 | Pembersihan anotasi train (clip ke batas gambar, buang box < 2 px, buang duplikat) |
 | 5 sampai 6 | Konversi COCO ke format YOLO, tulis `data.yaml` (train dan valid saja) |
 | 7 | Training (tabel `RUNS`) |
-| 8 sampai 9 | Evaluasi checkpoint pada valid, pilih model final dan `E2_CONF` |
+| 8 sampai 9 | Evaluasi checkpoint pada valid, pilih model final, setelan NMS, dan `E2_CONF` |
 | 9b | Opsional: checkpoint averaging dan kalibrasi bias per kelas |
 | 10 | Evaluasi test sekali |
 | 11 | Inference dari weights rilis |
@@ -86,7 +87,7 @@ Run yang terputus dilanjutkan dari `last.pt` jika dijalankan ulang dengan `RUN_I
 | patience | 0 | 0 |
 | save_period | 10 | 10 |
 
-Evaluasi: `conf=0.001`, NMS `iou=0.7`, `max_det=300`, FP32. `E2_CONF=0.26` dipilih dari valid.
+Evaluasi: `conf=0.001`, `max_det=300`, FP32. Checkpoint diurutkan dengan NMS default Ultralytics (`iou=0.7`). Evaluasi akhir, test, dan inference memakai NMS `iou=0.45` per kelas dan `E2_CONF=0.20`, keduanya dipilih dari valid (bagian 9, [results/nms_selection_valid.csv](results/nms_selection_valid.csv)).
 
 ## Weights
 
@@ -94,25 +95,29 @@ Evaluasi: `conf=0.001`, NMS `iou=0.7`, `max_det=300`, FP32. `E2_CONF=0.26` dipil
 |---|---|---|
 | v1.0 | [telepati_agridata_v1.0.pt](https://github.com/DimasPanca/telepati-agridata/releases/download/v1.0/telepati_agridata_v1.0.pt) | `cdd815e88a22b6d9d6ee205dba7e51944e9c563177f6bdab01d1d984cc373b67` |
 
+v1.2 memakai file weights v1.0 tanpa perubahan. Yang berubah hanya setelan NMS dan `E2_CONF` di notebook.
+
 ## Hasil
 
-| Split | F1 makro (E1) | F1 makro @ conf 0.26 (E2) | mAP@50 |
-|---|---|---|---|
-| valid | 0.6981 | 0.6930 | 0.6884 |
-| test | 0.6951 | 0.6951 | 0.6898 |
+| Versi | Split | F1 makro (E1) | F1 makro (E2) | mAP@50 |
+|---|---|---|---|---|
+| v1.2 | valid | 0.7113 | 0.7073 @ 0.20 | 0.6929 |
+| v1.2 | test | **0.7023** | 0.6963 @ 0.20 | 0.6952 |
+| v1.0 | valid | 0.6981 | 0.6930 @ 0.26 | 0.6884 |
+| v1.0 | test | 0.6951 | 0.6951 @ 0.26 | 0.6898 |
 
-E1: F1 makro pada confidence yang memaksimalkan rata-rata F1 (Ultralytics `val`). E2: F1 makro pada confidence tetap. Skor test direproduksi di Colab T4, lihat [results/audit_log.md](results/audit_log.md).
+E1: F1 makro pada confidence yang memaksimalkan rata-rata F1 (Ultralytics `val`). E2: F1 makro pada confidence tetap. Latihan audit di Colab T4: [results/audit_log.md](results/audit_log.md).
 
-F1 per kelas (test):
+F1 per kelas (test, v1.2):
 
 | Kelas | F1 | Kelas | F1 |
 |---|---|---|---|
-| Bacterial leaf blight | 0.4315 | Leaf roller | 0.8613 |
-| Bacterial panicle blight | 0.8547 | Leaf scald | 0.5059 |
-| Blast | 0.5167 | Narrow brown | 0.9986 |
-| Brown spot | 0.3431 | Sheath blight | 0.6065 |
-| False smut | 0.9133 | Tungro | 0.7042 |
-| Healthy | 0.9104 | | |
+| Bacterial leaf blight | 0.3963 | Leaf roller | 0.8691 |
+| Bacterial panicle blight | 0.8857 | Leaf scald | 0.5269 |
+| Blast | 0.5164 | Narrow brown | 0.9967 |
+| Brown spot | 0.3840 | Sheath blight | 0.6103 |
+| False smut | 0.9224 | Tungro | 0.7026 |
+| Healthy | 0.9149 | | |
 
 Perbandingan run pada valid:
 
@@ -121,6 +126,16 @@ Perbandingan run pada valid:
 | A_yolo11s_s42 | dari nol, 150 epoch | 0.6835 (`best.pt`) |
 | A800_yolo11s_s42 | lanjutan Run A pada 800 px, 40 epoch | 0.6887 |
 | A_fit_yolo11s_s42 | lanjutan Run A tanpa augmentasi berat, 50 epoch | 0.6981 (epoch 20), dirilis sebagai v1.0 |
+
+Setelan setelah training, dibandingkan pada bobot v1.0:
+
+| Versi | Perubahan | E1 valid | E1 test |
+|---|---|---|---|
+| v1.0 | NMS default `iou=0.7` | 0.6981 | 0.6951 |
+| v1.1 | kalibrasi bias per kelas di head, tidak dirilis | 0.7033 | 0.6936 |
+| v1.2 | NMS `iou=0.45` per kelas | 0.7113 | 0.7023 |
+
+Setiap versi ditetapkan dari valid sebelum test dievaluasi (D-19 dan D-20 di [docs/01_PRD.md](docs/01_PRD.md)).
 
 Log training: [results/](results/).
 
