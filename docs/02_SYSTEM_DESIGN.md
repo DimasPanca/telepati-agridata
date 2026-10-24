@@ -221,7 +221,9 @@ Catatan AMP: Ultralytics mengunduh model kecil hanya untuk *memeriksa* dukungan 
 | **E2** | F1 makro 11 kelas pada confidence tetap `E2_CONF`. Prediksi per kelas diurutkan dari confidence tertinggi lalu dicocokkan greedy ke label dengan IoU ≥ 0,5. | Cadangan bila juri memakai confidence tetap. |
 | mAP@50 | Dari `model.val()` | Pembanding |
 
-Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `iou=0.7` (NMS), `max_det=300`, `quantize=32` (FP32).
+Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `max_det=300`, `quantize=32` (FP32).
+
+NMS: checkpoint di S-08 diurutkan dengan default Ultralytics (`iou=0.7`, per kelas). Evaluasi akhir, test, dan inference memakai `NMS_IOU` dan `AGNOSTIC_NMS` yang dipilih di S-09 (v1.2: `iou=0.45`, per kelas).
 
 Pencocokan E2 dihitung sekali pada confidence 0,001. Karena prediksi diproses dari confidence tertinggi, memotong daftar pada threshold mana pun menghasilkan pencocokan yang sama, sehingga semua threshold bisa dievaluasi dari satu kali inference.
 
@@ -233,7 +235,7 @@ Keluaran S-08 per checkpoint: `run_id, checkpoint, E1, mAP50, F1 per kelas` → 
 
 1. Kandidat: semua checkpoint dari Run A, B, C (gabungan CSV S-08).
 2. Urutkan berdasarkan **E1 di valid**.
-3. Isi `SELECTED_WEIGHTS` dengan kandidat teratas, jalankan bagian 9: notebook mencetak `E2_CONF` terbaik di valid dan nilai F1 di ±0,05 dan ±0,10 dari titik itu.
+3. Isi `SELECTED_WEIGHTS` dengan kandidat teratas, jalankan bagian 9: notebook menilai 12 setelan NMS (IoU 0,35 sampai 0,7, per kelas dan lintas kelas) dengan uji silang dua paruh valid, lalu mencetak `E2_CONF` terbaik dengan NMS terpilih dan nilai F1 di ±0,05 dan ±0,10 dari titik itu.
 4. Pilih kandidat dengan kurva landai dan tanpa kelas yang runtuh.
 5. Keputusan oleh Dimas berdasarkan laporan Rahman. Test tidak dilihat (R-20b).
 
