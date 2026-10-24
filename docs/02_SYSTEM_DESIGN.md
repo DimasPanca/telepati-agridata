@@ -239,6 +239,19 @@ Keluaran S-08 per checkpoint: `run_id, checkpoint, E1, mAP50, F1 per kelas` → 
 
 ---
 
+## 8b. Penyempurnaan bobot (bagian 9b notebook, opsional)
+
+Diaktifkan dengan `REFINE_WEIGHTS = True` pada `MODE = "full"`.
+
+| Langkah | Detail |
+|---|---|
+| Model soup | Mulai dari `REFINE_BASE` (`epoch20.pt`), coba tambahkan `epoch40`, `epoch10`, `epoch30`, `last`, `best` satu per satu; rata-rata bobot EMA; dipertahankan hanya jika E1 valid naik |
+| Kalibrasi bias | Dari prediksi valid hasil soup, cari confidence terbaik tiap kelas; geser bias kelas di semua cabang `cv3` sebesar `logit(E2_CONF) − logit(t_kelas)`, dikali `n/(n+50)` |
+| Keluaran | `RUNS_DIR/<RUN_ID>_refined/soup_calibrated.pt` dan `refine_summary.json` |
+| Keputusan | Dipakai sebagai rilis baru hanya jika E1 valid naik ≥ 0,008 dari checkpoint dasar |
+
+---
+
 ## 9. Jalur inference-saja (S-11)
 
 | Langkah | Detail |
