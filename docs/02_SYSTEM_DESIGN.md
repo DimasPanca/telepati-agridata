@@ -142,6 +142,8 @@ Setiap bagian diawali sel Markdown yang menjelaskan tujuan, keluaran, dan aturan
 ### S-02 Dataset mentah
 - Masukan: `telepati-agridata-raw.zip` berisi `train/`, `valid/`, `test/`, masing-masing gambar `.jpg` dan `_annotations.coco.json`.
 - Menerima zip resmi panitia (split dibungkus satu folder, ada `__MACOSX`, `._*`, `.DS_Store`) maupun zip tim (split langsung di akar). File metadata macOS dilewati saat ekstraksi; folder berisi `train/_annotations.coco.json` dicari otomatis dan menjadi `RAW_DIR`.
+- `DATA_ZIP` juga boleh berupa folder yang sudah terekstrak (misalnya dataset Kaggle yang diekstrak otomatis saat diunggah); folder itu dipakai langsung tanpa ekstraksi ulang.
+- Ultralytics 8.4.184 dipasang di platform mana pun bila versi terpasang berbeda; mount Google Drive hanya dilakukan di Colab.
 - Ekstraksi dianggap selesai hanya jika semua gambar yang tercantum di file COCO ada. Ekstraksi yang terputus diulang dari awal.
 - SHA-256 dibandingkan dengan zip referensi tim hanya sebagai informasi, karena juri memakai zip resmi yang checksum-nya berbeda. Validitas isi dipastikan lewat jumlah gambar dan anotasi terhadap `03_DATA_CARD.md` §2.
 

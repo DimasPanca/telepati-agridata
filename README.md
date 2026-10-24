@@ -31,7 +31,7 @@ Model object detection penyakit padi (11 kelas) untuk **AI AgriData Intelligence
 
 1. Buka notebook di Google Colab: `TBD (link Open in Colab)`.
 2. Runtime → Change runtime type → **T4 GPU**.
-3. Siapkan zip dataset resmi apa adanya (format COCO, split `train/`, `valid/`, `test/`; folder pembungkus dan file `__MACOSX` ditangani otomatis), lalu isi path-nya di `DATA_ZIP` pada sel konfigurasi (bagian 0).
+3. Siapkan zip dataset resmi apa adanya (format COCO, split `train/`, `valid/`, `test/`; folder pembungkus dan file `__MACOSX` ditangani otomatis), lalu isi path-nya di `DATA_ZIP` pada sel konfigurasi (bagian 0). `DATA_ZIP` juga boleh berisi folder hasil ekstrak, misalnya dataset Kaggle yang diekstrak otomatis.
 4. Set `MODE = "inference_only"`. `WEIGHTS_URL`, `WEIGHTS_SHA256`, dan `E2_CONF` sudah terisi.
 5. Runtime → Run all. Notebook akan:
    - memasang dependency dari `requirements.txt`,
