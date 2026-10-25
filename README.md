@@ -6,7 +6,7 @@ Model YOLO11s dilatih dari nol menggunakan dataset resmi Agritech Data.
 | | |
 |---|---|
 | Tim | The Power of Kepepet, Universitas Sultan Ageng Tirtayasa |
-| Anggota | Dimas (Ketua), Rahman, Maman |
+| Anggota | Dimas (Ketua), Rachman, Winata |
 | Dosen Pembimbing | Arief Rahman, S.Kom., M.Kom |
 | Notebook | [notebooks/agridata_pipeline.ipynb](notebooks/agridata_pipeline.ipynb) ([Colab](https://colab.research.google.com/github/DimasPanca/telepati-agridata/blob/main/notebooks/agridata_pipeline.ipynb)) |
 | Versi | v1.3: Stage-2 No-Mosaic (`A_plus_nomosaic_s42`) + SWA + LBC Audit-Safe (`best_audit_safe.pt`) |
