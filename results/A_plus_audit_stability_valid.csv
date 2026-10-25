@@ -1,0 +1,7 @@
+Konfigurasi Evaluasi,iou,TTA,half,E1_mf1,E2_f1,mAP50,Waktu_s,Delta_vs_S11(TTA),Status_vs_S11(TTA),Delta_vs_NoTTA,Status_vs_NoTTA
+"1. S-11 Optimal (iou=0.45, TTA=True, FP32)",0.45,True,False,0.71935,0.71841,0.69929,68.1,0.0,AMAN (<=2%),0.00181,AMAN (<=2%)
+"2. S-11 + FP16 (iou=0.45, TTA=True, FP16)",0.45,True,True,0.71944,0.71862,0.69913,34.2,9e-05,AMAN (<=2%),0.0019,AMAN (<=2%)
+"3. S-11 IoU 0.50 (iou=0.50, TTA=True, FP32)",0.5,True,False,0.71794,0.71713,0.70157,68.1,-0.00141,AMAN (<=2%),0.0004,AMAN (<=2%)
+"4. Tanpa TTA IoU 0.45 (iou=0.45, TTA=False, FP32)",0.45,False,False,0.71754,0.71634,0.69071,33.4,-0.00181,AMAN (<=2%),0.0,AMAN (<=2%)
+"5. Tanpa TTA IoU 0.50 (iou=0.50, TTA=False, FP32)",0.5,False,False,0.71671,0.71533,0.6947,33.5,-0.00264,AMAN (<=2%),-0.00083,AMAN (<=2%)
+"6. Default Ultralytics (iou=0.70, TTA=False, FP32)",0.7,False,False,0.70745,0.70612,0.68852,33.5,-0.0119,AMAN (<=2%),-0.01009,AMAN (<=2%)

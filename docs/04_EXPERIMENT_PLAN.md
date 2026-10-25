@@ -190,3 +190,22 @@ Langkah 1 sampai 3 dijalankan Maman di Drive yang berisi folder Run B. Karena sa
 3. Kandidat baru dipakai hanya jika F1 uji silangnya minimal **+0,003** di atas v1.2 (0,7066). Kalau tidak ada yang lolos, v1.2 tetap final.
 4. Keputusan dicatat sebagai D-21 di PRD dan di-push **sebelum** test dievaluasi. Test dievaluasi sekali, dilaporkan apa adanya, lalu latihan audit di Colab T4.
 5. Kalibrasi bias per kelas (`CALIBRATE`) tidak dipakai untuk memilih model.
+
+### Hasil keputusan (25 Oktober 2026, malam)
+
+Kandidat yang lolos aturan keputusan adalah bobot `best_audit_safe.pt` dari Rahman (branch `mantest`), dirilis sebagai **v1.3** (`telepati_agridata_v1.3.pt`). Resepnya ada di bagian 9c notebook.
+
+| Kandidat (valid, potongan sama dengan v1.2) | F1 uji silang | Selisih vs v1.2 | Paruh lebih baik |
+|---|---|---|---|
+| v1.2: bobot v1.0, NMS 0,45 per kelas | 0,7065 | | |
+| Bobot v1.3, NMS 0,45 per kelas, tanpa TTA | 0,7061 | −0,0003 | 4 dari 10 |
+| **Bobot v1.3 + TTA, NMS 0,45 per kelas** | **0,7115** | **+0,0050** | 8 dari 10 |
+| Bobot v1.3 + TTA, NMS 0,38 per kelas (usulan Rahman) | 0,7103 | +0,0039 | 7 dari 10 |
+| Bobot v1.3 + TTA, NMS 0,45 lintas kelas | 0,7148 | +0,0083 | 9 dari 10 |
+
+- Kenaikan datang dari TTA. Tanpa TTA, bobot v1.3 setara v1.2.
+- Bias kelas v1.3 digeser dari seluruh valid, sehingga uji silang di atas optimistis. Pada v1.1, cara serupa naik di valid tetapi turun 0,0015 di test.
+- NMS lintas kelas tidak dipakai karena pada v1.0 menurunkan mAP@50 (0,6929 menjadi 0,6769).
+- Setelan final: TTA, NMS 0,45 per kelas, `E2_CONF = 0.25` (confidence terbaik di valid penuh). Keputusan dicatat sebagai D-21.
+- A_fit2, A_fit800, soup lintas run, dan garis YOLO26s tidak selesai dinilai sebelum batas waktu.
+- Notebook `mantest` tidak di-merge: bagian 10 dan 11 (audit) tidak ada, run A_fit dan log hasilnya dihapus, dan sel training A_plus menghapus folder run di Drive. Log run A dan A_plus dari branch itu dipindahkan ke `results/`.
