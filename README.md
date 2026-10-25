@@ -11,7 +11,7 @@ Model YOLO11s dilatih dari nol menggunakan dataset resmi Agritech Data.
 | Notebook | [notebooks/agridata_pipeline.ipynb](notebooks/agridata_pipeline.ipynb) ([Colab](https://colab.research.google.com/github/DimasPanca/telepati-agridata/blob/main/notebooks/agridata_pipeline.ipynb)) |
 | Versi | v1.3: weights v1.3 dengan TTA dan NMS IoU 0.45 per kelas |
 | Weights | [telepati_agridata_v1.3.pt](https://github.com/DimasPanca/telepati-agridata/releases/download/v1.3/telepati_agridata_v1.3.pt) |
-| F1 makro test | v1.3: dihitung saat latihan audit Colab; v1.2: 0.7023 |
+| F1 makro test | 0.7123 |
 
 ## Cara Menjalankan
 
@@ -115,24 +115,29 @@ v1.2 memakai file weights v1.0 tanpa perubahan. Yang berubah hanya setelan NMS d
 
 | Versi | Split | F1 makro (E1) | F1 makro (E2) | mAP@50 |
 |---|---|---|---|---|
-| v1.3 | test | dihitung saat latihan audit Colab | | |
+| v1.3 | test | **0.7123** | 0.7053 @ 0.25 | 0.7038 |
 | v1.2 | valid | 0.7113 | 0.7073 @ 0.20 | 0.6929 |
-| v1.2 | test | **0.7023** | 0.6963 @ 0.20 | 0.6952 |
+| v1.2 | test | 0.7023 | 0.6963 @ 0.20 | 0.6952 |
 | v1.0 | valid | 0.6981 | 0.6930 @ 0.26 | 0.6884 |
 | v1.0 | test | 0.6951 | 0.6951 @ 0.26 | 0.6898 |
 
 E1: F1 makro pada confidence yang memaksimalkan rata-rata F1 (Ultralytics `val`). E2: F1 makro pada confidence tetap. Latihan audit di Colab T4: [results/audit_log.md](results/audit_log.md).
 
-F1 per kelas (test, v1.2):
+F1 per kelas (test):
 
-| Kelas | F1 | Kelas | F1 |
-|---|---|---|---|
-| Bacterial leaf blight | 0.3963 | Leaf roller | 0.8691 |
-| Bacterial panicle blight | 0.8857 | Leaf scald | 0.5269 |
-| Blast | 0.5164 | Narrow brown | 0.9967 |
-| Brown spot | 0.3840 | Sheath blight | 0.6103 |
-| False smut | 0.9224 | Tungro | 0.7026 |
-| Healthy | 0.9149 | | |
+| Kelas | v1.3 | v1.2 |
+|---|---|---|
+| Bacterial leaf blight | 0.4878 | 0.3963 |
+| Bacterial panicle blight | 0.8540 | 0.8857 |
+| Blast | 0.5282 | 0.5164 |
+| Brown spot | 0.3981 | 0.3840 |
+| False smut | 0.9316 | 0.9224 |
+| Healthy | 0.9308 | 0.9149 |
+| Leaf roller | 0.8688 | 0.8691 |
+| Leaf scald | 0.5291 | 0.5269 |
+| Narrow brown | 0.9942 | 0.9967 |
+| Sheath blight | 0.6123 | 0.6103 |
+| Tungro | 0.7005 | 0.7026 |
 
 Perbandingan run pada valid:
 

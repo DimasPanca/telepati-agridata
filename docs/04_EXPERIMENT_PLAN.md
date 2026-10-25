@@ -207,5 +207,6 @@ Kandidat yang lolos aturan keputusan adalah bobot `best_audit_safe.pt` dari Rahm
 - Bias kelas v1.3 digeser dari seluruh valid, sehingga uji silang di atas optimistis. Pada v1.1, cara serupa naik di valid tetapi turun 0,0015 di test.
 - NMS lintas kelas tidak dipakai karena pada v1.0 menurunkan mAP@50 (0,6929 menjadi 0,6769).
 - Setelan final: TTA, NMS 0,45 per kelas, `E2_CONF = 0.25` (confidence terbaik di valid penuh). Keputusan dicatat sebagai D-21.
+- Test v1.3, dihitung sekali saat latihan audit Colab T4 setelah D-21 di-push: E1 0,7123, E2 0,7053, mAP@50 0,7038 (v1.2: 0,7023, 0,6963, 0,6952).
 - A_fit2, A_fit800, soup lintas run, dan garis YOLO26s tidak selesai dinilai sebelum batas waktu.
 - Notebook `mantest` tidak di-merge: bagian 10 dan 11 (audit) tidak ada, run A_fit dan log hasilnya dihapus, dan sel training A_plus menghapus folder run di Drive. Log run A dan A_plus dari branch itu dipindahkan ke `results/`.
