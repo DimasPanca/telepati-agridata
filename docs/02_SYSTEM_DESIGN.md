@@ -223,7 +223,7 @@ Catatan AMP: Ultralytics mengunduh model kecil hanya untuk *memeriksa* dukungan 
 
 Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `max_det=300`, `quantize=32` (FP32).
 
-NMS: checkpoint di S-08 diurutkan dengan default Ultralytics (`iou=0.7`, per kelas). Evaluasi akhir, test, dan inference memakai `NMS_IOU` dan `AGNOSTIC_NMS` yang dipilih di S-09 (v1.2: `iou=0.45`, per kelas).
+NMS: checkpoint di S-08 diurutkan dengan default Ultralytics (`iou=0.7`, per kelas). Checkpoint diurutkan tanpa TTA. Evaluasi akhir, test, dan inference memakai `NMS_IOU`, `AGNOSTIC_NMS`, dan `TTA` yang dipilih di S-09 (v1.2: `iou=0.45`, per kelas, tanpa TTA).
 
 Pencocokan E2 dihitung sekali pada confidence 0,001. Karena prediksi diproses dari confidence tertinggi, memotong daftar pada threshold mana pun menghasilkan pencocokan yang sama, sehingga semua threshold bisa dievaluasi dari satu kali inference.
 
@@ -247,10 +247,10 @@ Diaktifkan dengan `REFINE_WEIGHTS = True` pada `MODE = "full"`.
 
 | Langkah | Detail |
 |---|---|
-| Model soup | Mulai dari `REFINE_BASE` (`epoch20.pt`), coba tambahkan `epoch40`, `epoch10`, `epoch30`, `last`, `best` satu per satu; rata-rata bobot EMA; dipertahankan hanya jika E1 valid naik |
-| Kalibrasi bias | Dari prediksi valid hasil soup, cari confidence terbaik tiap kelas; geser bias kelas di semua cabang `cv3` sebesar `logit(E2_CONF) − logit(t_kelas)`, dikali `n/(n+50)` |
-| Keluaran | `RUNS_DIR/<RUN_ID>_refined/soup_calibrated.pt` dan `refine_summary.json` |
-| Keputusan | Dipakai sebagai rilis baru hanya jika E1 valid naik ≥ 0,008 dari checkpoint dasar |
+| Model soup | Mulai dari `REFINE_BASE` (bobot rilis v1.0). Bahan dari run satu garis training (`A_plus_nomosaic_s42`, `A_fit2_yolo11s_s42`, checkpoint `A_fit_yolo11s_s42`) dicoba dari E1 valid tertinggi; rata-rata bobot EMA; dipertahankan hanya jika E1 valid soup naik. Soup dan dasar lalu dibandingkan dengan F1 uji silang dua paruh |
+| Kalibrasi bias | Nonaktif (`CALIBRATE = False`). Bila diaktifkan: geser bias kelas di semua cabang `cv3` sebesar `logit(E2_CONF) − logit(t_kelas)`, dikali `n/(n+50)`; skornya in-sample |
+| Keluaran | `RUNS_DIR/soup/soup.pt` dan `soup_summary.json` |
+| Keputusan | Mengikuti aturan di `04_EXPERIMENT_PLAN.md` bagian 9: F1 uji silang minimal +0,003 di atas v1.2 |
 
 ---
 
