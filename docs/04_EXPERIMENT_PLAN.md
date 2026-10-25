@@ -168,9 +168,24 @@ Kedua run baru mengunduh bobot rilis v1.0 sendiri, jadi tidak butuh folder run l
 
 Rahman juga mengirim `args.yaml` dan `results.csv` run `A_plus_nomosaic_s42` lewat pull request ke `results/A_plus_nomosaic_s42/`, supaya entri `A_plus_nomosaic_s42` di tabel `RUNS` bisa dicocokkan dengan setelan aslinya.
 
+### Garis YOLO26s (Run B)
+
+Branch `wintest` belum memuat hasil training atau evaluasi Run B, hanya audit dataset. Perubahan pembersihan data di branch itu (box train di bawah 2 px dan duplikat tidak lagi dibuang) tidak dibawa ke `dimstest`, supaya notebook tetap mereproduksi data training v1.0.
+
+Di Ultralytics 8.4.184, YOLO26 secara default memakai head one-to-many dengan NMS (`nms=None`), sama seperti saat validasi training. Jadi `NMS_IOU` dan TTA tetap berlaku. Head one-to-one tanpa NMS (`nms=False`) ikut dinilai sebagai satu baris tambahan di grid bagian 9 (`NMS_FREE`).
+
+| Langkah | Yang dijalankan | Waktu T4 | Lanjut jika |
+|---|---|---|---|
+| 1. Gerbang | Bagian 8 dengan `RUN_ID = "B_yolo26s_s42"` (training tidak diulang jika `last.pt` sudah selesai) | sekitar 15 menit | E1 valid terbaik sekitar 0,69 atau lebih. Pembanding pada setelan yang sama: v1.0 mendapat 0,6981. |
+| 2. Setelan inference | Bagian 9 dengan `SELECTED_WEIGHTS` = checkpoint B terbaik | sekitar 10 menit | Baris terbaik mendekati 0,7066 |
+| 3. Penyempurnaan | `RUN_ID = "B_fit_yolo26s_s42"`: lanjut dari `best.pt` Run B, 20 epoch, resep A_fit | sekitar 60 menit | |
+| 4. Soup | Bagian 9b dengan `SOUP_LINE = "B"`, setelah setelan inference diisi dari bagian 9 untuk `B_fit/best.pt` | sekitar 20 menit | |
+
+Langkah 1 sampai 3 dijalankan Maman di Drive yang berisi folder Run B. Karena satu model saja yang boleh dipakai (R-03), YOLO26s tidak digabung dengan YOLO11s. YOLO26s hanya menggantikan v1.2 jika lolos aturan keputusan di bawah dengan kemampuannya sendiri.
+
 ### Aturan keputusan
 
-1. Kandidat: v1.2 (tanpa TTA), v1.0 + TTA, soup (dengan setelan inference terbaiknya), dan `A_fit800/best.pt`.
+1. Kandidat: v1.2 (tanpa TTA), v1.0 + TTA, soup (dengan setelan inference terbaiknya), `A_fit800/best.pt`, serta `B_fit/best.pt` dan soup B jika garis YOLO26s lolos gerbang.
 2. Setiap kandidat dinilai di bagian 9 dengan grid TTA x NMS. Yang dibandingkan adalah baris terbaik tiap kandidat pada kolom `F1 uji silang`.
 3. Kandidat baru dipakai hanya jika F1 uji silangnya minimal **+0,003** di atas v1.2 (0,7066). Kalau tidak ada yang lolos, v1.2 tetap final.
 4. Keputusan dicatat sebagai D-21 di PRD dan di-push **sebelum** test dievaluasi. Test dievaluasi sekali, dilaporkan apa adanya, lalu latihan audit di Colab T4.

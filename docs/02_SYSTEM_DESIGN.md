@@ -223,7 +223,7 @@ Catatan AMP: Ultralytics mengunduh model kecil hanya untuk *memeriksa* dukungan 
 
 Parameter terkunci: `imgsz=640`, `batch=16`, `conf=0.001`, `max_det=300`, `quantize=32` (FP32).
 
-NMS: checkpoint di S-08 diurutkan dengan default Ultralytics (`iou=0.7`, per kelas). Checkpoint diurutkan tanpa TTA. Evaluasi akhir, test, dan inference memakai `NMS_IOU`, `AGNOSTIC_NMS`, dan `TTA` yang dipilih di S-09 (v1.2: `iou=0.45`, per kelas, tanpa TTA).
+NMS: checkpoint di S-08 diurutkan dengan default Ultralytics (`iou=0.7`, per kelas). Checkpoint diurutkan tanpa TTA. Evaluasi akhir, test, dan inference memakai `NMS_IOU`, `AGNOSTIC_NMS`, `NMS_FREE`, dan `TTA` yang dipilih di S-09 (v1.2: `iou=0.45`, per kelas, tanpa TTA). `NMS_FREE` hanya untuk YOLO26: head one-to-one tanpa NMS (`nms=False`); tanpa itu YOLO26 memakai head one-to-many dengan NMS seperti YOLO11.
 
 Pencocokan E2 dihitung sekali pada confidence 0,001. Karena prediksi diproses dari confidence tertinggi, memotong daftar pada threshold mana pun menghasilkan pencocokan yang sama, sehingga semua threshold bisa dievaluasi dari satu kali inference.
 
@@ -249,7 +249,8 @@ Diaktifkan dengan `REFINE_WEIGHTS = True` pada `MODE = "full"`.
 |---|---|
 | Model soup | Mulai dari `REFINE_BASE` (bobot rilis v1.0). Bahan dari run satu garis training (`A_plus_nomosaic_s42`, `A_fit2_yolo11s_s42`, checkpoint `A_fit_yolo11s_s42`) dicoba dari E1 valid tertinggi; rata-rata bobot EMA; dipertahankan hanya jika E1 valid soup naik. Soup dan dasar lalu dibandingkan dengan F1 uji silang dua paruh |
 | Kalibrasi bias | Nonaktif (`CALIBRATE = False`). Bila diaktifkan: geser bias kelas di semua cabang `cv3` sebesar `logit(E2_CONF) − logit(t_kelas)`, dikali `n/(n+50)`; skornya in-sample |
-| Keluaran | `RUNS_DIR/soup/soup.pt` dan `soup_summary.json` |
+| Garis YOLO26s | `SOUP_LINE = "B"`: dasar `B_fit_yolo26s_s42/weights/best.pt`, bahan dari `B_fit_yolo26s_s42` dan `B_yolo26s_s42`. Arsitektur berbeda tidak dicampur |
+| Keluaran | `RUNS_DIR/soup/soup.pt` (garis A) atau `RUNS_DIR/soup_B/soup.pt` (garis B), dan `soup_summary.json` |
 | Keputusan | Mengikuti aturan di `04_EXPERIMENT_PLAN.md` bagian 9: F1 uji silang minimal +0,003 di atas v1.2 |
 
 ---
