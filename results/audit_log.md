@@ -71,3 +71,15 @@ F1 per kelas identik di kedua pengukuran. Unduh weights, inference, dan evaluasi
 Unduh weights, inference dengan TTA, dan evaluasi selesai dalam 64,8 detik di T4 (23,9 ms inference per gambar). Ini evaluasi test pertama dan satu-satunya untuk v1.3, dilakukan setelah keputusan D-21 di-push.
 
 **Status: LOLOS.** Notebook berjalan dari weights rilis tanpa training, checksum cocok, waktu jauh di bawah batas 30 menit.
+
+Uji ulang dari sudut pandang juri (runtime Colab T4 baru, notebook dari tag `v1.3`): bagian 11 kembali memberi E1 0.7123, E2 0.7053, mAP@50 0.7038 (65,0 dan 66,5 detik). Skor yang sama lalu dihitung dengan beberapa cara evaluasi lain pada file weights yang sama. Uji ini hanya untuk memeriksa kestabilan dan tidak mengubah setelan yang dikirim.
+
+| Cara evaluasi | F1 makro | mAP@50 | Selisih vs 0.7123 |
+|---|---|---|---|
+| Notebook tim (TTA, NMS 0.45, FP32) | 0.7123 | 0.7038 | 0.0000 |
+| Diulang sekali lagi | 0.7123 | 0.7038 | 0.0000 |
+| FP16 | 0.7119 | 0.7032 | -0.0004 |
+| Tanpa TTA, NMS 0.45 | 0.7104 | 0.7002 | -0.0019 |
+| Default Ultralytics (NMS 0.7, tanpa TTA) | 0.7016 | 0.6943 | -0.0107 |
+
+Selisih terbesar 0.0107, masih di dalam toleransi audit ±0,02.
