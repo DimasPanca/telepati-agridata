@@ -139,3 +139,39 @@ Kelandaian kurva F1       :
 Usulan                    :
 Keputusan Dimas           :
 ```
+
+---
+
+## 9. Tahap penyempurnaan 25 Oktober (branch `dimstest`)
+
+Titik awal adalah v1.2: bobot v1.0 (A_fit epoch 20) dengan NMS 0,45 per kelas. Skornya E1 valid 0,7113, F1 uji silang valid 0,7066, dan E1 test 0,7023.
+
+Laporan Rahman (`A_plus_nomosaic_s42`) mencapai E1 valid 0,7212. Angka itu gabungan tiga hal: TTA, NMS 0,38, dan kalibrasi bias per kelas yang dihitung dan dinilai pada valid yang sama. Tanpa TTA dan kalibrasi, pada NMS 0,45, `A_plus/best.pt` mendapat 0,7095, setara dengan v1.0 (0,7113). Jadi selisihnya datang dari TTA dan kalibrasi in-sample, bukan dari bobot yang lebih baik. Kalibrasi in-sample sudah terbukti tidak bertahan di test (v1.1). Karena itu semua kandidat di tahap ini dibandingkan dengan **F1 uji silang dua paruh valid** dari bagian 9 notebook, bukan dengan E1 valid saja.
+
+Efek TTA tergantung model. Pada bobot v1.0, TTA menurunkan F1 uji silang: 0,7065 menjadi 0,7029 (NMS 0,45 per kelas) dan 0,7051 (NMS 0,45 lintas kelas), dengan Brown spot turun 0,019 karena TTA Ultralytics memperkecil gambar. Jadi TTA tidak otomatis dipakai; grid di bagian 9 menilainya untuk setiap kandidat.
+
+### Pembagian kerja
+
+| Siapa | Yang dijalankan | Waktu T4 | Output |
+|---|---|---|---|
+| Rahman | `RUN_ID = "A_fit2_yolo11s_s42"`, `MODE = "full"` | sekitar 30 menit | `runs/A_fit2_yolo11s_s42/` |
+| Maman | `RUN_ID = "A_fit800_yolo11s_s42"`, `MODE = "full"` | sekitar 70 menit | `runs/A_fit800_yolo11s_s42/` |
+| Dimas | Bagian 9 dengan `SELECTED_WEIGHTS = RELEASE_WEIGHTS` (grid TTA x NMS untuk v1.0) | sekitar 10 menit | tabel `infer_table` |
+| Dimas | Bagian 9b (`REFINE_WEIGHTS = True`) setelah bahan soup tersedia | sekitar 20 menit | `runs/soup/soup.pt`, `soup_summary.json` |
+| Dimas | Bagian 9 dengan `SELECTED_WEIGHTS` = kandidat terbaik (soup atau `A_fit800/best.pt`) | sekitar 10 menit | `E2_CONF` dan setelan inference final |
+
+Kedua run baru mengunduh bobot rilis v1.0 sendiri, jadi tidak butuh folder run lain. Untuk bagian 9b, bahan soup harus ada sebagai **file asli** (bukan shortcut) di Drive Dimas dengan struktur `runs/<RUN_ID>/weights/<file>.pt`:
+
+- `A_plus_nomosaic_s42/weights/best.pt` (dari Rahman)
+- `A_fit2_yolo11s_s42/weights/{best,last,epoch4,epoch8}.pt` (dari Rahman)
+- `A_fit_yolo11s_s42/weights/{epoch10,epoch40}.pt` (sudah ada)
+
+Rahman juga mengirim `args.yaml` dan `results.csv` run `A_plus_nomosaic_s42` lewat pull request ke `results/A_plus_nomosaic_s42/`, supaya entri `A_plus_nomosaic_s42` di tabel `RUNS` bisa dicocokkan dengan setelan aslinya.
+
+### Aturan keputusan
+
+1. Kandidat: v1.2 (tanpa TTA), v1.0 + TTA, soup (dengan setelan inference terbaiknya), dan `A_fit800/best.pt`.
+2. Setiap kandidat dinilai di bagian 9 dengan grid TTA x NMS. Yang dibandingkan adalah baris terbaik tiap kandidat pada kolom `F1 uji silang`.
+3. Kandidat baru dipakai hanya jika F1 uji silangnya minimal **+0,003** di atas v1.2 (0,7066). Kalau tidak ada yang lolos, v1.2 tetap final.
+4. Keputusan dicatat sebagai D-21 di PRD dan di-push **sebelum** test dievaluasi. Test dievaluasi sekali, dilaporkan apa adanya, lalu latihan audit di Colab T4.
+5. Kalibrasi bias per kelas (`CALIBRATE`) tidak dipakai untuk memilih model.

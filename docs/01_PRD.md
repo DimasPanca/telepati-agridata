@@ -157,7 +157,7 @@ Sumber: halaman regulasi resmi TELEPATI 8.0 dan jawaban tertulis panitia (diteri
 | D-04 | Resolusi 640, seed `42`, `deterministic=True`. | Ukuran asli data 640×640. Reproducibility. |
 | D-05 | Training **hanya** pada split train (10.133 gambar). Valid untuk seleksi. Test dievaluasi **sekali** di akhir. | R-20. |
 | D-06 | Tidak ada pencocokan gambar test↔train di notebook atau inference. Pengelompokan gambar kembar hanya di dalam train. | R-20(c). |
-| D-07 | Tidak ada ensemble, pseudo-label, self-supervised, atau TTA berat. | R-03, R-18, R-20(a). |
+| D-07 | Tidak ada ensemble, pseudo-label, self-supervised, atau TTA berat. Revisi 25 Okt 2026: TTA bawaan Ultralytics (`augment=True`, satu model, gambar asli ditambah skala 0,83 dengan flip dan skala 0,67) boleh dipakai jika dipilih dari valid. TTA buatan sendiri dan gabungan beberapa model tetap tidak dipakai. | R-03 (tetap satu model dan satu file weights), R-18 (sekitar 25 ms per gambar di T4, jauh di bawah 30 menit), R-20(a). |
 | D-08 | Weights final lewat **GitHub Releases** (bukan Git LFS). | Direct link sederhana, tanpa kuota LFS. |
 | D-09 | Skor dilaporkan dalam dua versi: **E1** = `mf1` Ultralytics `val()` (F1 pada confidence optimal bersama, IoU 0,5) dan **E2** = F1 makro pada confidence tetap yang ditulis eksplisit. | Menutup risiko definisi metrik juri (O-01). |
 | D-10 | Skor mandiri = angka dari **latihan audit** di runtime Colab T4 yang bersih. | Paling mirip cara juri. |
